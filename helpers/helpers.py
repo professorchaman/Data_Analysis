@@ -26,116 +26,11 @@ from peakutils.plot import plot as pplot
 
 from tqdm import tqdm
 
-import spe_read as spe  
+import spe_read.spe_read as spe  
 
 ## Defining all functions
 
 # DO NOT CHANGE anything - except the locaiton of your lamp data file ( it is in the i_corr function)
-
-class SelectFilesButton(widgets.Button):
-    """A file widget that leverages tkinter.filedialog."""
-
-    def __init__(self, *args, **kwargs):
-        """Initialize the SelectFilesButton class."""
-        super(SelectFilesButton, self).__init__(*args, **kwargs)
-        # Add the selected_files trait
-        self.add_traits(files=traitlets.traitlets.List())
-        # Create the button.
-        self.description = "Select File"
-        self.icon = "square-o"
-        self.style.button_color = "orange"
-        # Set on click behavior.
-        self.on_click(self.select_files)
-
-    @staticmethod
-    def select_files(b):
-        """Generate instance of tkinter.filedialog.
-        Parameters
-        ----------
-        b : obj:
-            An instance of ipywidgets.widgets.Button
-        """
-        # Create Tk root
-        root = Tk()
-        # Hide the main window
-        root.withdraw()
-        # Raise the root to the top of all windows.
-        root.call('wm', 'attributes', '.', '-topmost', True)
-        # List of selected fileswill be set to b.value
-        b.files = filedialog.askopenfilename(multiple=True)
-        f = b.files
-        '''
-        for i in range(0,len(f)):
-            print(i,f[i],end="\n")   # load preview cut process plot
-        '''
-        b.description = "Files Selected"
-        b.icon = "check-square-o"
-        b.style.button_color = "lightgreen"
- 
-class DataReader():
-    
-    def __init__(self, file_name):
-        self.file_name = file_name
-        
-    def read_file(self):
-        
-        fname = os.path.splitext(self.file_name)[0]
-        ext = os.path.splitext(self.file_name)[1]
-        
-        metadata = None
-        
-        ext_dict = {".csv" : (",",0), ".txt" : ("\t",0), ".dat" : (None,0), ".spe" : ()}
-        
-        if ext == ".spe":
-            x, y, metadata = self.read_spe()
-            return x, y, metadata
-
-        data = pd.read_csv(self.file_name, skiprows=ext_dict[ext][1], sep=ext_dict[ext][0],engine='python',header=None)
-        x = data[0].to_numpy()
-        y = data[1].to_numpy()
-        
-        if ext == ".dat":
-            col_len = len(data.columns)
-            
-            y = np.zeros(shape=(len(x),col_len-1))
-
-            for k in range(0,col_len-1):
-                y[:,k] = data.iloc[:,k+1].values
-        
-        return x, y, metadata
-
-    def read_xlsx(self):
-        return pd.read_excel(self.file_name)
-
-    def read_json(self):
-        return pd.read_json(self.file_name)
-    
-    def read_spe(self):
-        spe_obj = spe.spe_reader(file_name=self.file_name)
-        
-        file_data = []
-        metadata_dict = dict()
-        
-        metadata_footer = spe_obj.spe_files.footer
-
-        grove, cw = spe_obj.get_grating_info(metadata_footer)
-        et = spe_obj.get_exposure_time(metadata_footer)
-        acc_val, acc_method = spe_obj.get_accumulation_info(metadata_footer)
-        
-        x = spe_obj.spe_files._get_wavelength()
-        
-        file_data[:] = spe_obj.spe_files.data[:][0][0]
-        
-        metadata_dict = {
-            "grating" : str(grove) + " g/mm",
-            "center_wavelength" : str(cw) + " nm",
-            "exposure_time" : et + " msec",
-            "accumulation_value" : acc_val,
-            "accumulation_method" : acc_method
-        }
-        
-        return x, file_data, metadata_dict
-        # return NotImplementedError 
 
 def data_cleaning(data,erp):
     
@@ -195,37 +90,7 @@ def filter_median(data,k_size):
     
     return filt_data
 
-def i_corr(flamp,f,i):
-    start = 0
-    end = -1
 
-    head_i, tail_i = os.path.split(f[i])
-    
-    ## Important note to change the location of this .txt file below to where it is in your computer.
-    calibstd = np.loadtxt(r"G:\Shared drives\Pauzauskie Team Drive\CG\Scripts\030410638_HL-2000-CAL_2014-01-15-14-09_VISEXT1EXT2_FIB.txt")
-    xcalib = calibstd[:,0]
-    ycalib = calibstd[:,1]
-
-    x,y = DataReader(file_name=f[i]).read_file()
-
-    HglampFunc = CubicSpline(xcalib,ycalib)
-    hglampI = HglampFunc(x) # Create interpolation of true lamp spectrum
-    
-    hglampdata_x, hglampdata_y = DataReader(file_name=flamp[0]).read_file() # Split true lamp spectra into x and y
-
-    ICF = hglampI/(hglampdata_y) # Creates ratio of true lamp spectra to real lamp data, ICF = Intensity Correction Factor
-
-    ynew = (y)*ICF # multiplies real data by intensity correction factor
-
-    ynew = np.nan_to_num(ynew,nan=0,posinf=0,neginf=0)
-    datamatrix = np.column_stack((x,ynew)) # Compiles corrected data into a new matrix
-    savename = f[i][:-4]+"_calib.txt" # Create filename for new data
-    
-    head_c, tail_c = os.path.split(savename)
-    
-    np.savetxt(savename, datamatrix) # Save new data
-
-    return x,y,ynew
 
 def slicing_func(x,y,yi,start_x,end_x):
     start = np.argmin(abs(x-start_x))
@@ -487,8 +352,6 @@ def i_corr_cleaning(iFiles,do_baseline_subtraction,do_median_filtering,do_data_c
         
     # plt.show()
     # plt.savefig()
-
-
 
 if __name__ == "__main__":
     pass
