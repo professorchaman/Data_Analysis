@@ -25,6 +25,9 @@ import peakutils
 from peakutils.plot import plot as pplot
 
 from tqdm import tqdm
+from data_reader.datareader import DataReader
+from intensity_correction.intensitycorrection import i_corr
+from select_button.selectfilesbutton import SelectFilesButton
 
 import spe_read.spe_read as spe  
 
@@ -150,6 +153,7 @@ def remove_cosmic_rays(selectFiles,batching,batch_size,average,final_file_name='
     median_array = concatenated_array
     
     median_batches = []
+    averaged_data = []
     
     if batching==True:
         # Get the total number of elements and batches
@@ -190,7 +194,7 @@ def remove_cosmic_rays(selectFiles,batching,batch_size,average,final_file_name='
         np.savetxt(os.path.join(head_i,tail_i[:-13]+"-averaged_data.csv"), total_average_data, delimiter=',')
 
     # Return the final median array
-    return x_data, median_array
+    return x_data, median_array, averaged_data
 
 def data_averaging(selectFiles,average,batching, batch_size, final_file_name='-averaged_data.csv'):
     
@@ -261,10 +265,12 @@ def mean_f_wvl(x,y,meanf_method):
 def _1Lorentzian(x, amp1, cen1, wid1):
     return (amp1*wid1**2/((x-cen1)**2+wid1**2))
 
-def ram2nm(x,laser_source):
+def ram2nm(x):
+    laser_source = 532.109
     return 10**7/(10**7/laser_source - x)
 
-def nm2ram(x,laser_source):
+def nm2ram(x):
+    laser_source = 532.109
     return 10**7*(1/laser_source - 1/x)
 
 def nm2eV(x):

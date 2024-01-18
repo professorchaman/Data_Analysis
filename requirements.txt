@@ -1,0 +1,10 @@
+ipywidgets
+IPython
+numpy
+pandas
+matplotlib
+scipy
+pybaselines
+tk
+peakutils
+tqdm
