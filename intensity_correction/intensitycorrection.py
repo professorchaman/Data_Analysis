@@ -11,12 +11,12 @@ def i_corr(flamp,f,i):
     calibration_x_data = calibration_standard[:,0]
     calibration_y_data = calibration_standard[:,1]
 
-    x,y = DataReader(file_name=f[i]).read_file()
+    x, y, _ = DataReader(file_name=f[i]).read_file()
 
     hg_lamp_fit = CubicSpline(calibration_x_data,calibration_y_data)
     hg_lamp_interp = hg_lamp_fit(x) # Create interpolation of true lamp spectrum
     
-    hg_lampdata_x, hg_lampdata_y = DataReader(file_name=flamp[0]).read_file() # Split true lamp spectra into x and y
+    hg_lampdata_x, hg_lampdata_y, _ = DataReader(file_name=flamp[0]).read_file() # Split true lamp spectra into x and y
 
     icf = hg_lamp_interp/(hg_lampdata_y) # Creates ratio of true lamp spectra to real lamp data, icf = Intensity Correction Factor
 
