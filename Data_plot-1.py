@@ -57,8 +57,6 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.setGeometry(700, 300, 200, 200)
         
-        
-
         # Create the maptlotlib FigureCanvas object, 
         # which defines a single set of axes as self.axes.
         
@@ -179,8 +177,6 @@ class MainWindow(QtWidgets.QMainWindow):
         vbox5.addWidget(self.sp5label)
         vbox5.addWidget(self.spin5)
         vbox5.addWidget(self.button5)
-        
-        
         
         for w in [self.grid_cb]:
             self.hbox.addWidget(w)

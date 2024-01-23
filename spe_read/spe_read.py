@@ -4,12 +4,14 @@ import spe_loader as sl
 import matplotlib.pyplot as plt
 import numpy as np
 
-class spe_reader():
+class SpeReader():
     
     def __init__(self, file_name) -> None:
         self._file_name = file_name
         self.spe_files = sl.load_from_files([self._file_name])
+        self.spe_tool = spe.SpeTool(self._file_name)
         
+        self.metadata = self.spe_files.footer
         self.raw_filepath = None
         self.bkg_data = None
         self.exposure_time = None
@@ -19,17 +21,17 @@ class spe_reader():
         self.center_wavelength = None
 
     
-    def get_background_info(self, metadata):
+    def get_background_info(self):
         
         filepath = self.spe_files.filepath
         self.raw_filepath = filepath[:-4] + "-raw.spe"
         # print(raw_filepath)
         
-        bkg_class = metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Experiment.OnlineCorrections.BackgroundCorrection
+        bkg_class = self.metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Experiment.OnlineCorrections.BackgroundCorrection
         bkg_clt = bkg_class.Enabled.cdata
         
         if bkg_clt == 'True':
-            raw_file = sl.load_from_files([raw_filepath])
+            raw_file = sl.load_from_files([self.raw_filepath])
 
             raw_data = self.raw_filepath.data[0][0][0]
             self.bkg_data =  self.spe_files.data[0][0][0] - raw_data
@@ -40,28 +42,28 @@ class spe_reader():
         
         return self.bkg_data
 
-    def get_exposure_time(self, metadata):
-        self.exposure_time = metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.ShutterTiming.ExposureTime.cdata
+    def get_exposure_time(self):
+        self.exposure_time = self.metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.ShutterTiming.ExposureTime.cdata
         return self.exposure_time
 
-    def get_accumulation_info(self, metadata):
-        acc_class = metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Experiment.OnlineProcessing.FrameCombination
+    def get_accumulation_info(self):
+        acc_class = self.metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Cameras.Camera.Experiment.OnlineProcessing.FrameCombination
         self.accumulation_value = acc_class.FramesCombined.cdata
         self.accumulation_method = acc_class.Method.cdata
         
         return self.accumulation_value, self.accumulation_method
 
-    def get_grating_info(self, metadata):
+    def get_grating_info(self):
         
-        grating_class = metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Spectrometers.Spectrometer.Grating
-        self.center_wavelength = float(grating_class.CenterWavelength.cdata)
-        self.grating_groove_value = int(self.grating_grove(grating_class))
-        #print(grating_grove(grating_class) + ' g/mm')
+        _grating_class = self.metadata.SpeFormat.DataHistories.DataHistory.Origin.Experiment.Devices.Spectrometers.Spectrometer.Grating
+        self.center_wavelength = float(_grating_class.CenterWavelength.cdata)
+        self.grating_groove_value = int(self._grating_grove(_grating_class))
+        #print(_grating_grove(grating_class) + ' g/mm')
         #print(cw_val + ' nm')
         
         return self.grating_groove_value, self.center_wavelength
 
-    def grating_grove(self, grating_class):
+    def _grating_grove(self, grating_class):
         grating_str = grating_class.Selected.cdata
         
         string_start = '['
