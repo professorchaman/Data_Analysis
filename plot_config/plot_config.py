@@ -2,9 +2,21 @@ import matplotlib.pyplot as plt
 
 # Set graphing properties
 plt.rcParams['font.sans-serif'] = ['Arial']  # Helvetica
-plt.rcParams["figure.figsize"] = [16, 7]
+plt.rcParams["figure.figsize"] = [14, 7]
 plt.rcParams["figure.dpi"] = 600
-plt.rcParams['axes.linewidth'] = 1.5
+plt.rcParams['axes.linewidth'] = 2
+plt.rcParams['grid.linewidth'] = 0.5
+plt.rcParams['grid.linestyle'] = '--'
+plt.rcParams['grid.alpha'] = 0.8
+plt.rcParams['xtick.major.width'] = 2
+plt.rcParams['ytick.major.width'] = 2
+plt.rcParams['xtick.minor.width'] = 1
+plt.rcParams['ytick.minor.width'] = 1
+plt.rcParams['xtick.major.size'] = 10
+plt.rcParams['ytick.major.size'] = 10
+plt.rcParams['xtick.minor.size'] = 5
+
+
 
 SMALL_SIZE = 16
 MEDIUM_SIZE = 18

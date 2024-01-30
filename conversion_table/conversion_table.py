@@ -1,3 +1,5 @@
+from helpers.helpers import nm2ram, ram2nm, nm2eV, eV2nm
+
 # Define a dictionary to map do_conversion values to corresponding actions
 conversion_table = {
     'raman': {
@@ -6,12 +8,12 @@ conversion_table = {
         'y_val': lambda data, x_data: data * x_data / 10**7
     },
     'energy': {
-        'x_val': lambda x_data: 1240 / x_data,
+        'x_val': lambda x_data, _: 1239.84193 / x_data,
         'x_label': 'Energy(eV)',
-        'y_val': lambda data, x_data: (1240 / (x_data**2)) * data
+        'y_val': lambda data, x_data: (1239.84193 / (x_data**2)) * data
     },
     'wavelength': {
-        'x_val': lambda x_data: x_data,
+        'x_val': lambda x_data, _: x_data,
         'x_label': 'Wavelength (nm)',
         'y_val': lambda data, x_data: data  # No change to y_val
     }
