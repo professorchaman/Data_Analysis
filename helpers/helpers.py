@@ -274,10 +274,10 @@ def nm2ram(x):
     return 10**7*(1/laser_source - 1/x)
 
 def nm2eV(x):
-    return 1232/x
+    return 1239.84193/x
 
 def eV2nm(x):
-    return x/1232
+    return 1239.84193/x
 
 def plot_meanf_data(laser_Pow, meanf_df, ax2, plot_title):
     for laser_power in laser_Pow:

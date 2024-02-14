@@ -32,6 +32,8 @@ class DataReader():
 
             for k in range(0,col_len-1):
                 y[:,k] = data.iloc[:,k+1].values
+            
+            metadata = {'col_len' : col_len}
         
         return x, y, metadata
 
