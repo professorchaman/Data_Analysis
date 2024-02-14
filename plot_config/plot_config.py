@@ -16,8 +16,6 @@ plt.rcParams['xtick.major.size'] = 10
 plt.rcParams['ytick.major.size'] = 10
 plt.rcParams['xtick.minor.size'] = 5
 
-
-
 SMALL_SIZE = 16
 MEDIUM_SIZE = 18
 BIGGER_SIZE = 20
@@ -29,3 +27,5 @@ plt.rc('xtick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)  # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)  # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+# ledgend title fontsize
+plt.rc('legend', title_fontsize=SMALL_SIZE)
