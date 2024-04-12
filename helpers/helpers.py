@@ -266,11 +266,11 @@ def _1Lorentzian(x, amp1, cen1, wid1):
     return (amp1*wid1**2/((x-cen1)**2+wid1**2))
 
 def ram2nm(x):
-    laser_source = 532.109
+    laser_source = 532.439
     return 10**7/(10**7/laser_source - x)
 
 def nm2ram(x):
-    laser_source = 532.109
+    laser_source = 532.439
     return 10**7*(1/laser_source - 1/x)
 
 def nm2eV(x):
